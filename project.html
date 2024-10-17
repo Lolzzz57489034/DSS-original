@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Recommendation System</title>
+    <style>
+        body {
+            background-image: url("C:\\Users\\Dhruv Patel\\OneDrive\\Desktop\\PC Wallpapers\\0_D5ihXU22Cm0r7df6.jpg");
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            flex-direction: column;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #fff;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #jobList {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Job Recommendation System</h1>
+    <form id="jobForm">
+        <label for="course">What is your course?</label>
+        <select id="course" name="course" required onchange="updateInterestsDropdown()">
+            <option value="">Select your course</option>
+            <option value="BBA">BBA</option>
+            <option value="MBA">MBA</option>
+            <option value="B. ARCH">B. ARCH</option>
+            <option value="B. TECH">B. TECH</option>
+            <option value="B.SC">B.SC</option>
+            <option value="BA">BA</option>
+        </select>
+
+        <div id="interestsContainer" style="display: none;">
+            <label for="interests">What are your interests?</label>
+            <select id="interests" name="interests" required>
+                <option value="">Select your interest</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Data Science and AI">Data Science and AI</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Finance">Finance</option>
+                <option value="Entrepreneurship">Entrepreneurship</option>
+            </select>
+        </div>
+
+        <label for="experience">How many years of experience do you have?</label>
+        <input type="number" id="experience" name="experience" required>
+
+        <label for="location">What is your preferred location for working?</label>
+        <input type="text" id="location" name="location" required>
+
+        <button type="button" onclick="getRecommendations()">Get Job Recommendations</button>
+        <button type="button" onclick="resetForm()">Reset</button>
+    </form>
+
+    <div id="jobList"></div>
+
+    <script>
+        function updateInterestsDropdown() {
+            const course = document.getElementById('course').value;
+            const interestsContainer = document.getElementById('interestsContainer');
+            if (course === 'BBA') {
+                interestsContainer.style.display = 'block';
+            } else {
+                interestsContainer.style.display = 'none';
+                document.getElementById('interests').value = ''; // Reset interest selection
+            }
+        }
+
+        function recommendJobs(course, interests, location, experience) {
+            let jobs = [];
+
+            // Convert interests to an array
+            const interestArray = interests ? [interests.trim().toLowerCase()] : [];
+
+            // BBA-related job recommendations
+            if (course === 'BBA' && experience < 5) {
+                if (interestArray.includes("data science and ai")) jobs.push('Data Scientist', 'Data Analyst', 'Business Analyst', 'Business Intelligence Analyst');
+                if (interestArray.includes("marketing")) jobs.push('Marketing Manager', 'Sales Executive', 'Business Development Manager');
+            }
+
+            // Other courses remain the same
+            // B.Tech-related job recommendations
+            else if (course === 'B. TECH' && experience < 5) {
+                if (interestArray.includes("software development")) jobs.push('Software Engineer', 'Full Stack Developer', 'DevOps Engineer');
+                if (interestArray.includes("artificial intelligence")) jobs.push('AI Engineer', 'Machine Learning Engineer', 'Data Scientist');
+                if (interestArray.includes("cybersecurity")) jobs.push('Cybersecurity Analyst', 'Network Security Engineer', 'Penetration Tester');
+            }
+
+            // BA-related job recommendations
+            else if (course === 'BA' && experience < 5) {
+                if (interestArray.includes("journalism")) jobs.push('Journalist', 'Content Writer', 'Media Analyst');
+                if (interestArray.includes("public relations")) jobs.push('Public Relations Manager', 'Brand Strategist', 'Communications Specialist');
+                if (interestArray.includes("psychology")) jobs.push('Counselor', 'HR Specialist', 'Behavioral Analyst');
+            }
+
+            // B.Design-related job recommendations
+            else if (course === 'B. ARCH' && experience < 5) {
+                if (interestArray.includes("graphic design")) jobs.push('Graphic Designer', 'UI/UX Designer', 'Visual Designer');
+                if (interestArray.includes("product design")) jobs.push('Product Designer', 'Industrial Designer', 'Design Consultant');
+                if (interestArray.includes("fashion design")) jobs.push('Fashion Designer', 'Textile Designer', 'Costume Designer');
+            }
+
+            // General interest-based recommendations
+            if (interestArray.includes("digital marketing")) jobs.push('Digital Marketing Executive', 'SEO Specialist', 'Social Media Manager');
+            if (interestArray.includes("finance")) jobs.push('Financial Analyst', 'Investment Banker', 'Accounts Manager');
+            if (interestArray.includes("operations")) jobs.push('Operations Manager', 'Supply Chain Analyst', 'Logistics Coordinator');
+            if (interestArray.includes("human resources")) jobs.push('HR Manager', 'Recruiter', 'Talent Acquisition Specialist');
+            if (interestArray.includes("content creation")) jobs.push('Content Creator', 'Copywriter', 'Content Strategist');
+
+            // Location-based recommendations
+            if (['Mumbai', 'Delhi', 'Hyderabad', 'Bangalore', 'Kolkata', 'Pune', 'Chennai', 'Bhopal'].includes(location) && experience < 5) {
+                jobs.push('Intern', 'Junior Developer', 'Trainee');
+            }
+
+            // Default recommendation if no match is found
+            if (jobs.length === 0) {
+                jobs.push('General Manager', 'Analyst', 'Consultant');
+            }
+
+            return [...new Set(jobs)]; // Remove duplicates
+        }
+
+        function getRecommendations() {
+            const course = document.getElementById('course').value;
+            const interests = document.getElementById('interests').value;
+            const experience = parseInt(document.getElementById('experience').value);
+            const location = document.getElementById('location').value;
+
+            const recommendedJobs = recommendJobs(course, interests, location, experience);
+            displayRecommendations(recommendedJobs);
+        }
+
+        function displayRecommendations(jobs) {
+            const jobList = document.getElementById('jobList');
+            jobList.innerHTML = '<h3>Job Recommendations:</h3>';
+            if (jobs.length === 0) {
+                jobList.innerHTML += '<p>No recommendations available based on your input.</p>';
+            } else {
+                const ul = document.createElement('ul');
+                jobs.forEach(job => {
+                    const li = document.createElement('li');
+                    li.textContent = job;
+                    ul.appendChild(li);
+                });
+                jobList.appendChild(ul);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('jobForm').reset();
+            document.getElementById('jobList').innerHTML = '';
+            document.getElementById('interestsContainer').style.display = 'none'; // Hide interests dropdown
+        }
+    </script>
+</body>
+</html>
